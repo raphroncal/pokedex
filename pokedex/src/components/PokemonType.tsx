@@ -1,4 +1,8 @@
-export const PokemonType = ({type}: {type: string}) => {
+export const PokemonType = ({ type }: { type: string }) => {
+    interface ColorType {
+        [key: string]: string;
+    }
+
     const color: ColorType = {
         normal: "px-4 rounded-full bg-type-normal",
         fire: "px-4 rounded-full bg-type-fire",
@@ -19,14 +23,10 @@ export const PokemonType = ({type}: {type: string}) => {
         steel: "px-4 rounded-full bg-type-steel",
         fairy: "px-4 rounded-full bg-type-fairy",
     };
-    
-    type ColorType = {
-        [key: string]: string;
-    };
 
     return (
         <div className={`${color[type]}`}>
-            <p className="font-mono">{type}</p>
+            <p className="font-mono text-xs">{type}</p>
         </div>
     );
 };

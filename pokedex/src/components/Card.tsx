@@ -1,31 +1,26 @@
 import { useState, useEffect } from "react";
 import { PokemonType } from "./PokemonType";
 
-export interface Object {
+export interface PokemonObject {
     name: string;
     url: string;
-}
-
-export interface Type {
-    slot: number;
-    type: Object;
 }
 
 export interface PokemonProps {
     id: number;
-    name: string;
-    stats?: number[];
-    types?: Type[];
-    url: string;
+    stats: number[];
+    types: Type[];
 }
 
-export const Card = ({ id, name, url }: PokemonProps) => {
-    // const types = ["fire", "fighting"];
-    const [data, setData] = useState([]);
+export interface Type {
+    slot: number;
+    type: PokemonObject;
+}
+
+export const Card = ({ name, url }: PokemonObject) => {
+    const [data, setData] = useState<PokemonProps>();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-
-    const paddedId = id.toString().padStart(3, "0");
 
     useEffect(() => {
         const fetchDataForPosts = async () => {
@@ -35,11 +30,12 @@ export const Card = ({ id, name, url }: PokemonProps) => {
                     throw new Error(`HTTP error: Status ${response.status}`);
                 }
                 let postsData = await response.json();
+                console.log(postsData);
                 setData(postsData);
                 setError(null);
             } catch (err: any) {
                 setError(err.message);
-                setData([]);
+                setData(data);
             } finally {
                 setLoading(false);
             }
@@ -48,28 +44,29 @@ export const Card = ({ id, name, url }: PokemonProps) => {
         fetchDataForPosts();
     }, []);
 
+    const paddedId = data?.id?.toString().padStart(3, "0");
+
     return (
-        <div className="flex flex-col h-[28rem] w-80 p-8 rounded-3xl bg-slate-900">
+        <div className="flex flex-col h-72 w-52 p-6 rounded-3xl bg-slate-900">
             <div className="flex justify-center items-center size-full">
                 <img
                     src={`https://assets.pokemon.com/assets/cms2/img/pokedex/full/${paddedId}.png`}
                     alt="pokemon"
-                    className="size-56"
+                    className="size-32"
                 />
             </div>
             <div className="flex flex-col gap-4">
                 <div>
-                    <p className="font-semibold text-3xl">{name}</p>
-                    <p className="text-slate-500">#{paddedId}</p>
+                    <p className="font-semibold text-xl">{name}</p>
+                    <p className="text-sm text-slate-500">#{paddedId}</p>
                 </div>
-                <div className="flex justify-end gap-2">
-                    {data &&
-                        data?.types?.map((pokemon: Type, index: number) => (
-                            <PokemonType
-                                type={pokemon.type.name}
-                                key={index}
-                            ></PokemonType>
-                        ))}
+                <div className="flex justify-end gap-1">
+                    {data?.types.map((pokemon: Type, index: number) => (
+                        <PokemonType
+                            type={pokemon.type.name}
+                            key={index}
+                        ></PokemonType>
+                    ))}
                 </div>
             </div>
         </div>
