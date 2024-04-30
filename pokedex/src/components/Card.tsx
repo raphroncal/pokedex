@@ -6,7 +6,7 @@ export interface PokemonObject {
     url: string;
 }
 
-export interface PokemonProps {
+export interface PokemonDetails {
     id: number;
     stats: number[];
     types: Type[];
@@ -18,9 +18,10 @@ export interface Type {
 }
 
 export const Card = ({ name, url }: PokemonObject) => {
-    const [data, setData] = useState<PokemonProps>();
+    const [data, setData] = useState<PokemonDetails>();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [imageLoaded, setImageLoaded] = useState(false);
 
     useEffect(() => {
         const fetchDataForPosts = async () => {
@@ -30,7 +31,6 @@ export const Card = ({ name, url }: PokemonObject) => {
                     throw new Error(`HTTP error: Status ${response.status}`);
                 }
                 let postsData = await response.json();
-                console.log(postsData);
                 setData(postsData);
                 setError(null);
             } catch (err: any) {
@@ -42,18 +42,33 @@ export const Card = ({ name, url }: PokemonObject) => {
         };
 
         fetchDataForPosts();
-    }, []);
+    }, [url]);
 
-    const paddedId = data?.id?.toString().padStart(3, "0");
+    const paddedId = data?.id.toString().padStart(3, "0");
+
+    const handleImageLoad = () => {
+        setImageLoaded(true);
+    };
+
+    if (loading) {
+        return <div>""</div>;
+    }
+
+    if (!data) {
+        return <div>No data available</div>;
+    }
 
     return (
         <div className="flex flex-col h-72 w-52 p-6 rounded-3xl bg-slate-900">
             <div className="flex justify-center items-center size-full">
+                {/* {imageLoaded ? ( */}
                 <img
                     src={`https://assets.pokemon.com/assets/cms2/img/pokedex/full/${paddedId}.png`}
                     alt="pokemon"
                     className="size-32"
+                    onLoad={handleImageLoad}
                 />
+                {/* // ) : null} */}
             </div>
             <div className="flex flex-col gap-4">
                 <div>
@@ -61,12 +76,14 @@ export const Card = ({ name, url }: PokemonObject) => {
                     <p className="text-sm text-slate-500">#{paddedId}</p>
                 </div>
                 <div className="flex justify-end gap-1">
-                    {data?.types.map((pokemon: Type, index: number) => (
-                        <PokemonType
-                            type={pokemon.type.name}
-                            key={index}
-                        ></PokemonType>
-                    ))}
+                    {!loading && data
+                        ? data.types.map((pokemon: Type, index: number) => (
+                              <PokemonType
+                                  type={pokemon.type.name}
+                                  key={index}
+                              ></PokemonType>
+                          ))
+                        : null}
                 </div>
             </div>
         </div>

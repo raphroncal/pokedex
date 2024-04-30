@@ -5,11 +5,40 @@ import { Card } from "@/components/Card";
 import { PokemonObject } from "@/components/Card";
 
 export default function Home() {
-    const [data, setData] = useState<PokemonObject[]>([]);
+    const [data, setData] = useState<PokemonObject[]>();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [query, setQuery] = useState<PokemonObject[]>();
-    const [sort, setSort] = useState("id");
+
+    const [copy, setCopy] = useState<PokemonObject[]>();
+    const [query, setQuery] = useState("");
+    const [sortOption, setSortOption] = useState("id");
+    const [limit, setLimit] = useState(10);
+
+    const search = (searchQuery: string) => {
+        const dataCopy = data?.filter((pokemon: PokemonObject) =>
+            pokemon.name.toLocaleLowerCase().includes(searchQuery)
+        );
+
+        setCopy(dataCopy);
+    };
+
+    const sortByName = (a: PokemonObject, b: PokemonObject) => {
+        const nameA = a.name.toLowerCase();
+        const nameB = b.name.toLowerCase();
+
+        return nameA.localeCompare(nameB);
+    };
+
+    const sortByID = (a: PokemonObject, b: PokemonObject) => {
+        const idA = Number(a.url.split("/").slice(-2)[0]);
+        const idB = Number(b.url.split("/").slice(-2)[0]);
+
+        return idA - idB;
+    };
+
+    const handleSortChange = (event: any) => {
+        setSortOption(event.target.value);
+    };
 
     useEffect(() => {
         const fetchDataForPosts = async () => {
@@ -22,6 +51,7 @@ export default function Home() {
                 }
                 let postsData = await response.json();
                 setData(postsData.results);
+                setCopy(postsData.results);
                 setError(null);
             } catch (err: any) {
                 setError(err.message);
@@ -37,57 +67,72 @@ export default function Home() {
     return (
         <div className="flex flex-col gap-10">
             <div>
-                <p className="text-3xl">Pokedex</p>
+                <div>
+                    <p className="text-3xl">Pokedex</p>
+                </div>
+                <div></div>
             </div>
             <div className="flex flex-col gap-10 md:px-10 xl:px-20 2xl:px-80">
                 <div className="flex justify-between items-center">
                     <div>
-                        <form action="search">
-                            <input
-                                name="query"
-                                placeholder="Latios"
-                                className="pl-6 py-1.5 rounded-lg border border-slate-300 bg-slate-900"
-                            />
-                        </form>
+                        <input
+                            name="query"
+                            placeholder="Latios"
+                            className="pl-6 py-1.5 rounded-lg border border-slate-300 bg-slate-900"
+                            onChange={(e) => {
+                                setQuery(e.target.value.toLocaleLowerCase());
+                                search(e.target.value.toLocaleLowerCase());
+                            }}
+                        />
                     </div>
                     <div>
-                        <form action="">
-                            <fieldset className="flex gap-2">
-                                <label className="flex gap-1">
-                                    <div>
-                                        <input
-                                            type="radio"
-                                            name="sort"
-                                            value="id"
-                                            checked={true}
-                                        />
-                                    </div>
-                                    <div>ID</div>
-                                </label>
-                                <label className="flex gap-1">
-                                    <div>
-                                        <input
-                                            type="radio"
-                                            name="sort"
-                                            value="name"
-                                        />
-                                    </div>
-                                    <div>Name</div>
-                                </label>
-                            </fieldset>
-                        </form>
+                        <fieldset className="flex gap-2">
+                            <label className="flex gap-1">
+                                <div>
+                                    <input
+                                        id="sortById"
+                                        type="radio"
+                                        name="sort"
+                                        value="id"
+                                        checked={sortOption === "id"}
+                                        onChange={handleSortChange}
+                                    />
+                                </div>
+                                <div>ID</div>
+                            </label>
+                            <label className="flex gap-1">
+                                <div>
+                                    <input
+                                        id="sortByName"
+                                        type="radio"
+                                        name="sort"
+                                        value="name"
+                                        checked={sortOption === "name"}
+                                        onChange={handleSortChange}
+                                    />
+                                </div>
+                                <div>Name</div>
+                            </label>
+                        </fieldset>
                     </div>
                 </div>
-                <div className="grid grid-cols-5 gap-y-4">
-                    {data.map((pokemon: PokemonObject, index) => (
-                        <div className="flex justify-center">
-                            <Card
-                                name={pokemon.name}
-                                url={pokemon.url}
-                                key={index}
-                            ></Card>
-                        </div>
-                    ))}
+                <div className="flex flex-wrap place-content-center gap-4">
+                    {!loading && copy
+                        ? copy
+                              .sort(
+                                  sortOption == "name" ? sortByName : sortByID
+                              )
+                              .slice(0, limit)
+                              .map((pokemon: PokemonObject, index) => (
+                                  <div className="flex justify-center">
+                                      <Card
+                                          name={pokemon.name}
+                                          url={pokemon.url}
+                                          key={index}
+                                      ></Card>
+                                  </div>
+                              ))
+                        : ""}
                 </div>
             </div>
         </div>
