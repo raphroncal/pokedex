@@ -65,55 +65,50 @@ export default function Home() {
     }, []);
 
     return (
-        <div className="flex flex-col gap-10">
-            <div>
+        <div className="flex flex-col gap-10 pt-10 px-10 xl:px-20 2xl:px-80">
+            <div className="flex justify-between">
                 <div>
-                    <p className="text-3xl">Pokedex</p>
+                    <p className="text-3xl font-bold">pokedex</p>
                 </div>
-                <div></div>
+                <div>
+                    <input
+                        name="query"
+                        placeholder="Latios"
+                        className="pl-6 py-1.5 rounded-lg border border-slate-300 bg-slate-900"
+                        onChange={(e) => {
+                            setQuery(e.target.value.toLocaleLowerCase());
+                            search(e.target.value.toLocaleLowerCase());
+                        }}
+                    />
+                </div>
             </div>
-            <div className="flex flex-col gap-10 px-10 xl:px-20 2xl:px-80">
-                <div className="flex justify-between items-center">
-                    <div>
-                        <input
-                            name="query"
-                            placeholder="Latios"
-                            className="pl-6 py-1.5 rounded-lg border border-slate-300 bg-slate-900"
-                            onChange={(e) => {
-                                setQuery(e.target.value.toLocaleLowerCase());
-                                search(e.target.value.toLocaleLowerCase());
-                            }}
-                        />
+            <div className="flex flex-col">
+                <div className="flex flex-col items-end">
+                    <div className="flex gap-1 w-min x">
+                        <div>
+                            <input
+                                id="sortById"
+                                type="radio"
+                                name="sort"
+                                value="id"
+                                checked={sortOption === "id"}
+                                onChange={handleSortChange}
+                            />
+                        </div>
+                        <div>ID</div>
                     </div>
-                    <div>
-                        <fieldset className="flex gap-2">
-                            <label className="flex gap-1">
-                                <div>
-                                    <input
-                                        id="sortById"
-                                        type="radio"
-                                        name="sort"
-                                        value="id"
-                                        checked={sortOption === "id"}
-                                        onChange={handleSortChange}
-                                    />
-                                </div>
-                                <div>ID</div>
-                            </label>
-                            <label className="flex gap-1">
-                                <div>
-                                    <input
-                                        id="sortByName"
-                                        type="radio"
-                                        name="sort"
-                                        value="name"
-                                        checked={sortOption === "name"}
-                                        onChange={handleSortChange}
-                                    />
-                                </div>
-                                <div>Name</div>
-                            </label>
-                        </fieldset>
+                    <div className="flex gap-1 w-min">
+                        <div>
+                            <input
+                                id="sortByName"
+                                type="radio"
+                                name="sort"
+                                value="name"
+                                checked={sortOption === "name"}
+                                onChange={handleSortChange}
+                            />
+                        </div>
+                        <div>Name</div>
                     </div>
                 </div>
                 <div className="flex flex-wrap place-content-center gap-4">
