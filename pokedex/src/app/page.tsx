@@ -72,7 +72,7 @@ export default function Home() {
                 </div>
                 <div></div>
             </div>
-            <div className="flex flex-col gap-10 md:px-10 xl:px-20 2xl:px-80">
+            <div className="flex flex-col gap-10 px-10 xl:px-20 2xl:px-80">
                 <div className="flex justify-between items-center">
                     <div>
                         <input
@@ -135,6 +135,18 @@ export default function Home() {
                         : ""}
                 </div>
             </div>
+            {!loading && copy?.length ? (
+                <div className="flex justify-center">
+                    <button
+                        onClick={() => {
+                            setLimit((limit) => limit + 10);
+                        }}
+                        className="bg-slate-800 px-4 py-1 rounded-lg"
+                    >
+                        Load More
+                    </button>
+                </div>
+            ) : null}
         </div>
     );
 }
