@@ -1,6 +1,6 @@
 export const PokemonType = ({ type }: { type: string }) => {
     interface ColorType {
-        [key: string]: string;
+        [type: string]: string;
     }
 
     const color: ColorType = {

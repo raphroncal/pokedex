@@ -2,7 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { Card } from "@/components/Card";
-import { PokemonObject } from "@/components/Card";
+
+export interface PokemonObject {
+    name: string;
+    url: string;
+}
 
 export default function Home() {
     const [data, setData] = useState<PokemonObject[]>();
@@ -13,14 +17,6 @@ export default function Home() {
     const [query, setQuery] = useState("");
     const [sortOption, setSortOption] = useState("id");
     const [limit, setLimit] = useState(10);
-
-    const search = (searchQuery: string) => {
-        const dataCopy = data?.filter((pokemon: PokemonObject) =>
-            pokemon.name.toLocaleLowerCase().includes(searchQuery)
-        );
-
-        setCopy(dataCopy);
-    };
 
     const sortByName = (a: PokemonObject, b: PokemonObject) => {
         const nameA = a.name.toLowerCase();
@@ -36,36 +32,37 @@ export default function Home() {
         return idA - idB;
     };
 
-    const handleSortChange = (event: any) => {
-        setSortOption(event.target.value);
-    };
-
     useEffect(() => {
-        const fetchDataForPosts = async () => {
+        const fetchData = async () => {
             try {
                 const response = await fetch(
                     `https://pokeapi.co/api/v2/pokemon/?limit=1010&offset=0`
                 );
-                if (!response.ok) {
-                    throw new Error(`HTTP error: Status ${response.status}`);
-                }
+
                 let postsData = await response.json();
                 setData(postsData.results);
                 setCopy(postsData.results);
-                setError(null);
             } catch (err: any) {
                 setError(err.message);
-                setData([]);
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchDataForPosts();
+        fetchData();
     }, []);
+
+    useEffect(() => {
+        const dataCopy = data?.filter((pokemon: PokemonObject) =>
+            pokemon.name.toLocaleLowerCase().includes(query)
+        );
+
+        setCopy(dataCopy);
+    }, [query]);
 
     return (
         <div className="flex flex-col gap-10 pt-10 px-10 xl:px-20 2xl:px-80">
+            {/* Search bar */}
             <div className="flex justify-between">
                 <div>
                     <p className="text-3xl font-bold">pokedex</p>
@@ -77,12 +74,13 @@ export default function Home() {
                         className="pl-6 py-1.5 rounded-lg border border-slate-300 bg-slate-900"
                         onChange={(e) => {
                             setQuery(e.target.value.toLocaleLowerCase());
-                            search(e.target.value.toLocaleLowerCase());
                         }}
                     />
                 </div>
             </div>
+
             <div className="flex flex-col">
+                {/* Sorting */}
                 <div className="flex flex-col items-end">
                     <div className="flex gap-1 w-min x">
                         <div>
@@ -92,7 +90,7 @@ export default function Home() {
                                 name="sort"
                                 value="id"
                                 checked={sortOption === "id"}
-                                onChange={handleSortChange}
+                                onChange={(e) => setSortOption(e.target.value)}
                             />
                         </div>
                         <div>ID</div>
@@ -105,12 +103,14 @@ export default function Home() {
                                 name="sort"
                                 value="name"
                                 checked={sortOption === "name"}
-                                onChange={handleSortChange}
+                                onChange={(e) => setSortOption(e.target.value)}
                             />
                         </div>
                         <div>Name</div>
                     </div>
                 </div>
+
+                {/* Cards */}
                 <div className="flex flex-wrap place-content-center gap-4">
                     {!loading && copy
                         ? copy
@@ -118,8 +118,11 @@ export default function Home() {
                                   sortOption == "name" ? sortByName : sortByID
                               )
                               .slice(0, limit)
-                              .map((pokemon: PokemonObject, index) => (
-                                  <div className="flex justify-center">
+                              .map((pokemon: PokemonObject, index: number) => (
+                                  <div
+                                      className="flex justify-center"
+                                      key={index}
+                                  >
                                       <Card
                                           name={pokemon.name}
                                           url={pokemon.url}
@@ -127,9 +130,10 @@ export default function Home() {
                                       ></Card>
                                   </div>
                               ))
-                        : ""}
+                        : undefined}
                 </div>
             </div>
+
             {!loading && copy?.length ? (
                 <div className="flex justify-center">
                     <button
@@ -141,7 +145,7 @@ export default function Home() {
                         Load More
                     </button>
                 </div>
-            ) : null}
+            ) : undefined}
         </div>
     );
 }
