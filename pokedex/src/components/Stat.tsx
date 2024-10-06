@@ -43,7 +43,7 @@ const StatBar: React.FC<StatProps> = ({ name, stat, index }) => {
             <div className="w-[60px]">
                 <p className="text-nowrap">{formattedName}</p>
             </div>
-            <div className="w-[10px]">
+            <div className="w-[28px]">
                 <p className="text-right">{stat}</p>
             </div>
             <div className="py-1.5">
