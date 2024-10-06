@@ -52,6 +52,13 @@ const config: Config = {
         dark: "#705746",
         steel: "#b7b7ce",
         fairy: "#d685ad",
+      },
+      'stat': {
+        red: "#f34444",
+        orange: "#ff7f0f",
+        yellow: "#ffdd57",
+        green: "#23cd5e",
+        blue: "#00c2b8",
       }
     }
   },

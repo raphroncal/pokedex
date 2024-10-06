@@ -61,6 +61,16 @@ export const Card = ({ name, url }: PokemonObject) => {
         return <div>No data available</div>;
     }
 
+    /**
+     * TODO: play around with the ff:
+     * border
+     * spacing
+     * padding
+     * no bg?
+     * image size
+     * alignment
+     * typing positioning
+     */
     return (
         <div
             className="flex flex-col h-72 w-52 p-6 rounded-3xl bg-slate-900"
