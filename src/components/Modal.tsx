@@ -51,7 +51,7 @@ const Modal: React.FC<ModalProps> = ({
                             <StatBar
                                 name={stat.stat.name}
                                 stat={stat.base_stat}
-                                index={index}
+                                key={index}
                             ></StatBar>
                         ))}
                     </div>

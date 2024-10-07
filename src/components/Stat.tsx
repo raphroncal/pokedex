@@ -1,10 +1,10 @@
 interface StatProps {
     name: string;
     stat: number;
-    index: number;
+    // index: number;
 }
 
-const StatBar: React.FC<StatProps> = ({ name, stat, index }) => {
+const StatBar: React.FC<StatProps> = ({ name, stat }) => {
     interface IStat {
         [key: string]: string;
     }
@@ -39,7 +39,7 @@ const StatBar: React.FC<StatProps> = ({ name, stat, index }) => {
     }
 
     return (
-        <div className="flex gap-x-5" key={index}>
+        <div className="flex gap-x-5">
             <div className="w-[60px]">
                 <p className="text-nowrap">{formattedName}</p>
             </div>
